@@ -59,7 +59,10 @@ const SymptomAnalyzer = () => {
       const { data } = await axios.post(
         `${API_BASE}/api/ai/symptom-analyzer`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` } }
+        {
+          params: activeUserId ? { userId: activeUserId, clerkUserId: activeUserId } : {},
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
       const aiText = data?.data?.aiResponse;

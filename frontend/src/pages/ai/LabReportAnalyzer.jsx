@@ -64,7 +64,10 @@ const LabReportAnalyzer = () => {
       const res = await axios.post(
         `${API_BASE}/api/ai/lab-report`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` } }
+        {
+          params: activeUserId ? { userId: activeUserId, clerkUserId: activeUserId } : {},
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
       const aiResponseText = res?.data?.data?.aiResponse;

@@ -50,7 +50,10 @@ const MedicineScanner = () => {
       const res = await axios.post(
         `${API_BASE}/api/ai/medicine-scanner`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` } }
+        {
+          params: activeUserId ? { userId: activeUserId, clerkUserId: activeUserId } : {},
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
       // Safe checks — backend response structure verify karo
