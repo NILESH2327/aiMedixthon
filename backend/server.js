@@ -28,26 +28,35 @@ const allowedOrigins = [
 
 // Middleware
 app.use(bodyParser.json());
-app.use(cors(
-  {
-    origin: function(origin, callback) {
-      if (!origin) return callback(null, true);
-      if (
-        allowedOrigins.includes(origin) ||
-        origin.endsWith(".vercel.app") ||
-        origin.includes("localhost") ||
-        process.env.NODE_ENV !== "production"
-      ) {
-        return callback(null, true);
-      }
+const corsOptions = {
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (
+      allowedOrigins.includes(origin) ||
+      origin.endsWith(".vercel.app") ||
+      origin.includes("localhost") ||
+      process.env.NODE_ENV !== "production"
+    ) {
+      return callback(null, true);
+    }
 
-      return callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-  }
-));
+    return callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "x-clerk-user-id",
+    "X-Clerk-User-Id",
+    "Accept",
+    "Origin",
+    "X-Requested-With",
+  ],
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(clerkMiddleware())
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ limit: '20mb', extended: true }));

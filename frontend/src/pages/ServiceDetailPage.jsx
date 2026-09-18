@@ -330,7 +330,6 @@ export default function ServiceDetail() {
 
       if (token) {
         headers.Authorization = `Bearer ${token}`;
-        if (userId) headers["x-clerk-user-id"] = userId;
       } else {
         toast.error(
           "Authentication token not available. Please sign in again.",

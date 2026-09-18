@@ -298,7 +298,6 @@ export default function DoctorDetail() {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
-          "x-clerk-user-id": activeUserId,
         },
         body: JSON.stringify(payload),
       });
