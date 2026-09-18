@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useAuth } from "@clerk/react";
+import { useAuth, useUser } from "@clerk/react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -252,7 +252,8 @@ const formatDate = (d) => {
 };
 
 const AiHistory = () => {
-  const { getToken } = useAuth();
+  const { getToken, userId } = useAuth();
+  const { user } = useUser();
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -268,7 +269,9 @@ const AiHistory = () => {
           setLoading(false);
           return;
         }
+        const activeUserId = userId || user?.id || "";
         const res = await axios.get(`${API_BASE}/api/ai/history`, {
+          params: activeUserId ? { userId: activeUserId, clerkUserId: activeUserId } : {},
           headers: { Authorization: `Bearer ${token}` },
         });
         setHistory(res?.data?.data || []);
@@ -294,7 +297,9 @@ const handleDelete = async (id, e) => {
       alert("Please sign in to delete history item.");
       return;
     }
+    const activeUserId = userId || user?.id || "";
     await axios.delete(`${API_BASE}/api/ai/history/${id}`, {
+      params: activeUserId ? { userId: activeUserId, clerkUserId: activeUserId } : {},
       headers: { Authorization: `Bearer ${token}` },
     });
     setHistory((prev) => prev.filter((item) => item._id !== id));

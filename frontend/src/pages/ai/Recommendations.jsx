@@ -1,24 +1,33 @@
 import { useState } from "react";
 import axios from "axios";
-import { useAuth } from "@clerk/react";
+import { useAuth, useUser } from "@clerk/react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Sparkles, Loader2, Heart, Utensils, Moon, Dumbbell,
-  CalendarCheck, ListChecks, AlertTriangle, RotateCcw,
-  ArrowLeft,
+  Sparkles, Target, Activity, Flame, Shield, Heart,
+  Coffee, Apple, Smile, ArrowRight, RotateCcw, AlertTriangle, ArrowLeft, Loader2, ListChecks,
 } from "lucide-react";
 import { API_BASE } from "../../config";
 
-const goalOptions = ["Weight Loss", "Better Sleep", "More Energy", "Heart Health", "Stress Relief", "Muscle Gain"];
-const iconMap = { Nutrition: Utensils, Sleep: Moon, Exercise: Dumbbell, Mental: Heart };
+const goalsList = [
+  "Weight Loss", "Muscle Gain", "Better Sleep", "Stress Relief",
+  "Heart Health", "High Energy", "Diabetes Care", "Immunity Boost",
+];
+
+const iconMap = {
+  diet: Apple, nutrition: Apple, exercise: Activity, workout: Flame,
+  fitness: Flame, sleep: Coffee, stress: Smile, mental: Smile,
+  general: Heart, routine: Target,
+};
+
 const getIcon = (title) => {
   const key = Object.keys(iconMap).find((k) => title.toLowerCase().includes(k.toLowerCase()));
   return iconMap[key] || Heart;
 };
 
 const Recommendations = () => {
-  const { getToken } = useAuth();
+  const { getToken, userId } = useAuth();
+  const { user } = useUser();
   const [step, setStep] = useState(1); // 1 = form, 2 = result
   const [age, setAge] = useState(25);
   const [gender, setGender] = useState("");
@@ -40,9 +49,10 @@ const Recommendations = () => {
         setRawError("Please sign in to get personalized recommendations.");
         return;
       }
+      const activeUserId = userId || user?.id || "";
       const res = await axios.post(
         `${API_BASE}/api/ai/recommendations`,
-        { age, gender, healthGoals: goals.join(", ") },
+        { age, gender, healthGoals: goals.join(", "), userId: activeUserId, clerkUserId: activeUserId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const aiResponseText = res?.data?.data?.aiResponse;

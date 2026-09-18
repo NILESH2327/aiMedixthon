@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import { useAuth } from "@clerk/react";
+import { useAuth, useUser } from "@clerk/react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Bot, User, Sparkles, AlertTriangle, ArrowLeft } from "lucide-react";
@@ -14,7 +14,8 @@ const suggestedPrompts = [
 ];
 
 const HealthAssistant = () => {
-  const { getToken } = useAuth();
+  const { getToken, userId } = useAuth();
+  const { user } = useUser();
   const [messages, setMessages] = useState([
     { role: "bot", text: "Hi! I'm MediBot 👋 Ask me anything about your health, symptoms, or general wellness tips." },
   ]);
@@ -40,9 +41,10 @@ const HealthAssistant = () => {
         setMessages((prev) => [...prev, { role: "bot", text: "Please sign in to chat with MediBot.", isError: true }]);
         return;
       }
+      const activeUserId = userId || user?.id || "";
       const res = await axios.post(
         `${API_BASE}/api/ai/assistant`,
-        { message: messageText },
+        { message: messageText, userId: activeUserId, clerkUserId: activeUserId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const reply = res?.data?.data?.aiResponse || "Sorry, I couldn't process that. Please try again.";

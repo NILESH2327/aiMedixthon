@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { useAuth } from "@clerk/react";
+import { useAuth, useUser } from "@clerk/react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -30,7 +30,8 @@ const cardVariants = {
 };
 
 const LabReportAnalyzer = () => {
-  const { getToken } = useAuth();
+  const { getToken, userId } = useAuth();
+  const { user } = useUser();
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [result, setResult] = useState(null);
@@ -52,8 +53,13 @@ const LabReportAnalyzer = () => {
         setRawError("Please sign in to analyze lab report.");
         return;
       }
+      const activeUserId = userId || user?.id || "";
       const formData = new FormData();
       formData.append("image", image);
+      if (activeUserId) {
+        formData.append("userId", activeUserId);
+        formData.append("clerkUserId", activeUserId);
+      }
 
       const res = await axios.post(
         `${API_BASE}/api/ai/lab-report`,

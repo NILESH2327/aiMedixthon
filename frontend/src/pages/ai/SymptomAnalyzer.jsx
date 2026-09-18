@@ -1,11 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
-import { useAuth } from "@clerk/react";
+import { useAuth, useUser } from "@clerk/react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   UploadCloud, Loader2, Stethoscope, AlertTriangle,
-  CheckCircle2, Lightbulb, ShieldAlert, ImageOff, X, Sparkles,
+  CheckCircle2, Lightbulb, HelpCircle, ShieldAlert, ImageOff, X, Sparkles,
   ArrowLeft,
 } from "lucide-react";
 import { API_BASE } from "../../config";
@@ -23,7 +23,8 @@ const cardVariants = {
 };
 
 const SymptomAnalyzer = () => {
-  const { getToken } = useAuth();
+  const { getToken, userId } = useAuth();
+  const { user } = useUser();
   const [symptoms, setSymptoms] = useState("");
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -46,9 +47,14 @@ const SymptomAnalyzer = () => {
         setRawError("Please sign in to analyze your symptoms.");
         return;
       }
+      const activeUserId = userId || user?.id || "";
       const formData = new FormData();
       formData.append("symptoms", symptoms);
       if (image) formData.append("image", image);
+      if (activeUserId) {
+        formData.append("userId", activeUserId);
+        formData.append("clerkUserId", activeUserId);
+      }
 
       const { data } = await axios.post(
         `${API_BASE}/api/ai/symptom-analyzer`,

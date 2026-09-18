@@ -1,22 +1,37 @@
 import fs from "fs";
+import jwt from "jsonwebtoken";
 import { getAuth } from "@clerk/express";
 import cloudinary from "../utils/cloudinary.js";
 import AiAnalysis from "../models/AiAnalysis.js";
 import { askGemini, askGeminiWithImage, cleanJsonString } from "../utils/gemini.js";
 
 const getUserId = (req) => {
-  if (typeof req.auth === "function") {
-    try {
-      const authObj = req.auth();
-      if (authObj?.userId) return authObj.userId;
-    } catch (e) {}
-  }
-  if (req.auth?.userId) return req.auth.userId;
   try {
-    const serverAuth = getAuth(req);
-    if (serverAuth?.userId) return serverAuth.userId;
-  } catch (e) {}
-  return null;
+    if (req.userId) return req.userId;
+    if (typeof req.auth === "function") {
+      try {
+        const authObj = req.auth();
+        if (authObj?.userId) return authObj.userId;
+      } catch (e) {}
+    }
+    const auth = req.auth || {};
+    const fromReq = auth?.userId || auth?.user_id || auth?.user?.id || req.user?.id || null;
+    if (fromReq) return fromReq;
+    try {
+      const serverAuth = getAuth ? getAuth(req) : null;
+      if (serverAuth?.userId) return serverAuth.userId;
+    } catch (e) {}
+    if (req.headers && req.headers.authorization) {
+      try {
+        const token = req.headers.authorization.replace(/^Bearer\s+/i, "");
+        const decoded = jwt.decode(token);
+        if (decoded?.sub) return decoded.sub;
+      } catch (e) {}
+    }
+    return req.body?.clerkUserId || req.body?.userId || req.query?.clerkUserId || req.query?.userId || req.headers?.["x-clerk-user-id"] || null;
+  } catch (e) {
+    return null;
+  }
 };
 
 const processImage = async (filePath) => {
