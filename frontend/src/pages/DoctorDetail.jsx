@@ -300,16 +300,16 @@ export default function DoctorDetail() {
       });
 
       const body = await res.json().catch(() => null);
-      if (!res.ok) {
+      if (!res.ok || res.redirected || !body) {
         const message =
-          body?.message || body?.error || `Booking failed (${res.status})`;
+          body?.message || body?.error || (res.redirected ? "Authentication required. Please sign in again." : `Booking failed (${res.status})`);
         toast.error(message, { position: "top-center" });
         setIsSubmitting(false);
         return;
       }
 
       // If checkoutUrl is returned -> redirect to Stripe Checkout
-      if (body.checkoutUrl) {
+      if (body?.checkoutUrl) {
         // redirect user to Stripe Checkout
         window.location.href = body.checkoutUrl;
         return;

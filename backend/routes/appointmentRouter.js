@@ -1,21 +1,45 @@
 import express from 'express';
-import { clerkClient ,clerkMiddleware ,requireAuth} from '@clerk/express';
+import { getAuth } from '@clerk/express';
 
 import { cancelAppointment, confirmPayment, createAppointment, getAppointments, getAppointmentsByDoctor, getAppointmentsByPatient, getRegisteredUserCount, getStats, updateAppointment } from '../controllers/appointmentController.js';
 
 const appointmentRouter = express.Router();
 
-appointmentRouter.get('/',getAppointments);
-appointmentRouter.get('/confirm',confirmPayment);
-appointmentRouter.get("/stats/summary" ,getStats);
+const requireAuthApi = (req, res, next) => {
+  let userId = null;
+  if (typeof req.auth === "function") {
+    try {
+      userId = req.auth()?.userId;
+    } catch (e) {}
+  }
+  if (!userId && req.auth?.userId) {
+    userId = req.auth.userId;
+  }
+  if (!userId) {
+    try {
+      userId = getAuth(req)?.userId;
+    } catch (e) {}
+  }
+  if (!userId) {
+    return res.status(401).json({
+      success: false,
+      message: "Please sign in to book an appointment.",
+    });
+  }
+  next();
+};
 
-appointmentRouter.post("/",clerkMiddleware(),requireAuth(),createAppointment);
+appointmentRouter.get('/', getAppointments);
+appointmentRouter.get('/confirm', confirmPayment);
+appointmentRouter.get("/stats/summary", getStats);
 
-appointmentRouter.get('/me' ,clerkMiddleware(),requireAuth(),getAppointmentsByPatient);
+appointmentRouter.post("/", requireAuthApi, createAppointment);
+
+appointmentRouter.get('/me', requireAuthApi, getAppointmentsByPatient);
 appointmentRouter.get("/doctor/:doctorId", getAppointmentsByDoctor);
 
-appointmentRouter.post("/:id/cancel" ,cancelAppointment);
-appointmentRouter.get("/patients/count" ,getRegisteredUserCount);
-appointmentRouter.put("/:id",updateAppointment);
+appointmentRouter.post("/:id/cancel", cancelAppointment);
+appointmentRouter.get("/patients/count", getRegisteredUserCount);
+appointmentRouter.put("/:id", updateAppointment);
 
 export default appointmentRouter;
