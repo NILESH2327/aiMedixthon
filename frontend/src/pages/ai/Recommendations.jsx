@@ -6,13 +6,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles, Target, Activity, Flame, Shield, Heart,
   Coffee, Apple, Smile, ArrowRight, RotateCcw, AlertTriangle, ArrowLeft, Loader2, ListChecks,
+  CalendarCheck,
 } from "lucide-react";
 import { API_BASE } from "../../config";
 
-const goalsList = [
+const goalOptions = [
   "Weight Loss", "Muscle Gain", "Better Sleep", "Stress Relief",
   "Heart Health", "High Energy", "Diabetes Care", "Immunity Boost",
 ];
+const goalsList = goalOptions;
 
 const iconMap = {
   diet: Apple, nutrition: Apple, exercise: Activity, workout: Flame,
