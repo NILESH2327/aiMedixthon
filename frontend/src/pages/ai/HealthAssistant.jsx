@@ -4,6 +4,7 @@ import { useAuth } from "@clerk/react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Bot, User, Sparkles, AlertTriangle, ArrowLeft } from "lucide-react";
+import { API_BASE } from "../../config";
 
 const suggestedPrompts = [
   "I have a mild fever, what should I do?",
@@ -40,7 +41,7 @@ const HealthAssistant = () => {
         return;
       }
       const res = await axios.post(
-        "http://localhost:4000/api/ai/assistant",
+        `${API_BASE}/api/ai/assistant`,
         { message: messageText },
         { headers: { Authorization: `Bearer ${token}` } }
       );

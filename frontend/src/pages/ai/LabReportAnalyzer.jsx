@@ -8,6 +8,7 @@ import {
   ShieldAlert, ImageOff, X, Sparkles, ArrowUp, ArrowDown, CheckCircle2,
   ArrowLeft,
 } from "lucide-react";
+import { API_BASE } from "../../config";
 
 const statusConfig = {
   Normal: { color: "from-emerald-400 to-green-500", text: "text-emerald-600", bg: "bg-emerald-50", border: "border-emerald-200" },
@@ -55,7 +56,7 @@ const LabReportAnalyzer = () => {
       formData.append("image", image);
 
       const res = await axios.post(
-        "http://localhost:4000/api/ai/lab-report",
+        `${API_BASE}/api/ai/lab-report`,
         formData,
         { headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` } }
       );

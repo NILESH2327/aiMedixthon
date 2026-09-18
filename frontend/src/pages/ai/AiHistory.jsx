@@ -7,6 +7,7 @@ import {
   Loader2, Stethoscope, Pill, FileText, MessageCircle, Sparkles,
   Clock, X, ImageIcon, Inbox, Trash2, ArrowLeft,
 } from "lucide-react";
+import { API_BASE } from "../../config";
 
 const typeConfig = {
   symptom: { label: "Symptom Analyzer", icon: Stethoscope, color: "from-teal-400 to-emerald-500", bg: "bg-teal-50", text: "text-teal-600" },
@@ -267,7 +268,7 @@ const AiHistory = () => {
           setLoading(false);
           return;
         }
-        const res = await axios.get("http://localhost:4000/api/ai/history", {
+        const res = await axios.get(`${API_BASE}/api/ai/history`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setHistory(res?.data?.data || []);
@@ -293,7 +294,7 @@ const handleDelete = async (id, e) => {
       alert("Please sign in to delete history item.");
       return;
     }
-    await axios.delete(`http://localhost:4000/api/ai/history/${id}`, {
+    await axios.delete(`${API_BASE}/api/ai/history/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     setHistory((prev) => prev.filter((item) => item._id !== id));

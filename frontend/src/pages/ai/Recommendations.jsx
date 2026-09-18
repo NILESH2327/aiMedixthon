@@ -8,6 +8,7 @@ import {
   CalendarCheck, ListChecks, AlertTriangle, RotateCcw,
   ArrowLeft,
 } from "lucide-react";
+import { API_BASE } from "../../config";
 
 const goalOptions = ["Weight Loss", "Better Sleep", "More Energy", "Heart Health", "Stress Relief", "Muscle Gain"];
 const iconMap = { Nutrition: Utensils, Sleep: Moon, Exercise: Dumbbell, Mental: Heart };
@@ -40,7 +41,7 @@ const Recommendations = () => {
         return;
       }
       const res = await axios.post(
-        "http://localhost:4000/api/ai/recommendations",
+        `${API_BASE}/api/ai/recommendations`,
         { age, gender, healthGoals: goals.join(", ") },
         { headers: { Authorization: `Bearer ${token}` } }
       );

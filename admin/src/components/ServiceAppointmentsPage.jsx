@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { serviceAppointmentsStyles } from '../assets/dummyStyles'
 import { CheckCircle, Loader2, SearchIcon, XCircle, XIcon,User,Phone,BadgeIndianRupee,Calendar,Clock } from 'lucide-react';
 
- const API_BASE ="http://localhost:4000";
+ const API_BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
  // helper fxn ke liye ..
  function formatTwo(n) {
   return String(n).padStart(2, "0");

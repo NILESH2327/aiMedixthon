@@ -8,6 +8,7 @@ import {
   Clock, ThumbsUp, XCircle, ShieldAlert, ImageOff, X, Sparkles,
   ArrowLeft,
 } from "lucide-react";
+import { API_BASE } from "../../config";
 
 const cardVariants = {
   hidden: { opacity: 0, y: 24 },
@@ -41,7 +42,7 @@ const MedicineScanner = () => {
       formData.append("image", image);
 
       const res = await axios.post(
-        "http://localhost:4000/api/ai/medicine-scanner",
+        `${API_BASE}/api/ai/medicine-scanner`,
         formData,
         { headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` } }
       );

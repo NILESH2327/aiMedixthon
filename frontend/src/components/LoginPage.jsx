@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 const STORAGE_KEY = 'doctorToken_v1';
 const LoginPage = () => {
-   const API_BASE = "http://localhost:4000";
+   const API_BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
 
   const [formData, setFormData] = useState({
     email: "",

@@ -8,6 +8,7 @@ import {
   CheckCircle2, Lightbulb, ShieldAlert, ImageOff, X, Sparkles,
   ArrowLeft,
 } from "lucide-react";
+import { API_BASE } from "../../config";
 
 const severityConfig = {
   Mild: { color: "from-emerald-400 to-green-500", text: "text-emerald-600", bg: "bg-emerald-50", border: "border-emerald-200" },
@@ -50,7 +51,7 @@ const SymptomAnalyzer = () => {
       if (image) formData.append("image", image);
 
       const { data } = await axios.post(
-        "http://localhost:4000/api/ai/symptom-analyzer",
+        `${API_BASE}/api/ai/symptom-analyzer`,
         formData,
         { headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` } }
       );

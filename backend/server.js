@@ -19,28 +19,33 @@ import aiRouter from "./routes/aiRoutes.js";
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-const allowedOrigins =[
+const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
-
-];
+  process.env.FRONTEND_URL,
+  process.env.ADMIN_URL,
+].filter(Boolean);
 
 // Middleware
 app.use(bodyParser.json());
 app.use(cors(
   {
-    origin : function(origin ,callback){
-      if(!origin) return callback(null ,true);
-      if(allowedOrigins.includes(origin)){
-          return callback(null ,true)
+    origin: function(origin, callback) {
+      if (!origin) return callback(null, true);
+      if (
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".vercel.app") ||
+        origin.includes("localhost") ||
+        process.env.NODE_ENV !== "production"
+      ) {
+        return callback(null, true);
       }
 
       return callback(new Error("Not allowed by CORS"));
     },
-    credentials:true,
-    methods:["GET","POST","PUT","DELETE","OPTIONS"],
-    allowedHeaders:["Content-Type", "Authorization"]
-    
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
   }
 ));
 app.use(clerkMiddleware())
