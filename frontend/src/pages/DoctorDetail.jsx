@@ -282,6 +282,8 @@ export default function DoctorDetail() {
       fees: fee,
       paymentMethod: paymentMethod || "Online",
       email: formData.email || undefined,
+      clerkUserId: userId || user?.id || undefined,
+      userId: userId || user?.id || undefined,
     };
 
     try {
@@ -295,6 +297,7 @@ export default function DoctorDetail() {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          "x-clerk-user-id": userId || user?.id || "",
         },
         body: JSON.stringify(payload),
       });

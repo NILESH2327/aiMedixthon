@@ -2,6 +2,7 @@ import Appointment from "../models/Appointment.js";
 import Doctor from "../models/Doctor.js";
 import dotenv from 'dotenv';
 import Stripe from "stripe";
+import jwt from "jsonwebtoken";
 
 import { getAuth } from "@clerk/express";
 import { clerkClient } from "@clerk/express";
@@ -34,6 +35,7 @@ const buildFrontendBase = (req) => {
 // this fxn will get the user from clerk and return the user details..
 function resolveClerkUserId(req) {
   try {
+    if (req.userId) return req.userId;
     if (typeof req.auth === "function") {
       try {
         const authObj = req.auth();
@@ -41,14 +43,22 @@ function resolveClerkUserId(req) {
       } catch (e) {}
     }
     const auth = req.auth || {};
-    const fromReq = auth?.userId || auth?.user_id || auth?.user?.id || req.user?.id || req.userId || null;
+    const fromReq = auth?.userId || auth?.user_id || auth?.user?.id || req.user?.id || null;
     if (fromReq) return fromReq;
     try {
       const serverAuth = getAuth ? getAuth(req) : null;
-      return serverAuth?.userId || null;
-    } catch (e) {
-      return null;
+      if (serverAuth?.userId) return serverAuth.userId;
+    } catch (e) {}
+    if (req.headers && req.headers.authorization) {
+      try {
+        const token = req.headers.authorization.replace(/^Bearer\s+/i, "");
+        const decoded = jwt.decode(token);
+        if (decoded && (decoded.sub || decoded.userId || decoded.user_id)) {
+          return decoded.sub || decoded.userId || decoded.user_id;
+        }
+      } catch (e) {}
     }
+    return req.body?.clerkUserId || req.body?.userId || req.headers?.["x-clerk-user-id"] || null;
   } catch (e) {
     return null;
   }
@@ -100,7 +110,7 @@ export const getAppointments = async (req,res)=>{
 export const getAppointmentsByPatient = async(req,res)=>{
   try{
     const queryCreatedBy = req.query.createdBy || null;
-    const clerkUserId = req.auth?.userId || null ;
+    const clerkUserId = resolveClerkUserId(req);
     const resolvedCreatedBy = queryCreatedBy || clerkUserId || null;
      
     console.log("URL:", req.originalUrl);

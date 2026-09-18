@@ -319,6 +319,8 @@ export default function ServiceDetail() {
           client: "frontend",
           serviceName: service?.name,
         },
+        clerkUserId: userId || undefined,
+        userId: userId || undefined,
       };
 
       const headers = {
@@ -328,6 +330,7 @@ export default function ServiceDetail() {
 
       if (token) {
         headers.Authorization = `Bearer ${token}`;
+        if (userId) headers["x-clerk-user-id"] = userId;
       } else {
         toast.error(
           "Authentication token not available. Please sign in again.",

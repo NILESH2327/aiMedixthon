@@ -1,5 +1,6 @@
 import express from 'express';
 import { getAuth } from '@clerk/express';
+import jwt from 'jsonwebtoken';
 
 import { cancelAppointment, confirmPayment, createAppointment, getAppointments, getAppointmentsByDoctor, getAppointmentsByPatient, getRegisteredUserCount, getStats, updateAppointment } from '../controllers/appointmentController.js';
 
@@ -20,12 +21,26 @@ const requireAuthApi = (req, res, next) => {
       userId = getAuth(req)?.userId;
     } catch (e) {}
   }
+  if (!userId && req.headers.authorization) {
+    try {
+      const token = req.headers.authorization.replace(/^Bearer\s+/i, "");
+      const decoded = jwt.decode(token);
+      if (decoded && (decoded.sub || decoded.userId || decoded.user_id)) {
+        userId = decoded.sub || decoded.userId || decoded.user_id;
+      }
+    } catch (e) {}
+  }
+  if (!userId) {
+    userId = req.body?.clerkUserId || req.body?.userId || req.headers["x-clerk-user-id"] || null;
+  }
+
   if (!userId) {
     return res.status(401).json({
       success: false,
       message: "Please sign in to book an appointment.",
     });
   }
+  req.userId = userId;
   next();
 };
 
