@@ -189,20 +189,22 @@ export const createAppointment = async(req,res)=>{
     // duplicate booking prevention
 
   const existingBooking = await Appointment.findOne({
-  doctorId,
-  createdBy: clerkUserId,
-  date: String(date),
-  time: String(time),
-  status: { $ne: "Canceled" }, // or match your exact status values
-}).lean();
+    doctorId,
+    createdBy: clerkUserId,
+    date: String(date),
+    time: String(time),
+    status: { $ne: "Canceled" },
+  }).lean();
 
-if (existingBooking) {
-  return res.status(409).json({
-    success: false,
-    message:
-      "You already have an appointment with this doctor at the selected slot.",
-  });
-}
+  if (existingBooking) {
+    if (existingBooking.payment?.status === "Paid" || existingBooking.status === "Confirmed") {
+      return res.status(409).json({
+        success: false,
+        message: "You already have a confirmed appointment with this doctor at the selected slot.",
+      });
+    }
+    await Appointment.deleteOne({ _id: existingBooking._id });
+  }
       
     let doctor =null;
     try{

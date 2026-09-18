@@ -149,7 +149,12 @@ export const createServiceAppointment = async(req,res)=>{
         ampm: finalAmpm,
         status: { $ne: "Canceled" },
       }).lean();
-      if (existing) return res.status(409).json({ success: false, message: "You already have a booking for this service at the selected date and time." });
+      if (existing) {
+        if (existing.payment?.status === "Paid" || existing.status === "Confirmed") {
+          return res.status(409).json({ success: false, message: "You already have a confirmed booking for this service at the selected date and time." });
+        }
+        await ServiceAppointment.deleteOne({ _id: existing._id });
+      }
     } catch (chkErr) {
       console.warn("Duplicate booking check failed:", chkErr);
     }

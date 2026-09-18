@@ -111,7 +111,7 @@ export default function DoctorDetail() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Clerk hooks
-  const { getToken, isLoaded: authLoaded } = useAuth();
+  const { userId, getToken, isLoaded: authLoaded } = useAuth();
   const { isSignedIn, user, isLoaded: userLoaded } = useUser();
 
   useEffect(() => {
@@ -250,43 +250,44 @@ export default function DoctorDetail() {
 
     setIsSubmitting(true);
 
-    const dateISO = selectedDate.toISOString().split("T")[0]; // YYYY-MM-DD
-
-    // prefer fields from doctor object (this is only sent as a hint; backend will use DB)
-    const doctorNameValue = doctor?.name || "";
-    const specialityValue =
-      doctor?.specialization ||
-      doctor?.speciality ||
-      doctor?.specialityName ||
-      "";
-
-    // optional owner from doctor object (backend will prefer doctor.owner)
-    const ownerValue = doctor?.owner || undefined;
-
-    const payload = {
-      doctorId: doctor._id || doctor.id,
-      doctorName: doctorNameValue,
-      speciality: specialityValue,
-      owner: ownerValue,
-      // NEW: send image hints (optional — backend prefers DB but accepts these)
-      doctorImageUrl: doctor?.imageUrl || doctor?.image || "",
-      doctorImagePublicId:
-        doctor?.imagePublicId || doctor?.image?.publicId || "",
-      patientName: formData.name,
-      mobile: mobileDigits,
-      age: formData.age,
-      gender: formData.gender,
-      date: dateISO,
-      time: selectedSlot,
-      fee: fee,
-      fees: fee,
-      paymentMethod: paymentMethod || "Online",
-      email: formData.email || undefined,
-      clerkUserId: userId || user?.id || undefined,
-      userId: userId || user?.id || undefined,
-    };
-
     try {
+      const activeUserId = userId || user?.id || "";
+      const dateISO = selectedDate.toISOString().split("T")[0]; // YYYY-MM-DD
+
+      // prefer fields from doctor object (this is only sent as a hint; backend will use DB)
+      const doctorNameValue = doctor?.name || "";
+      const specialityValue =
+        doctor?.specialization ||
+        doctor?.speciality ||
+        doctor?.specialityName ||
+        "";
+
+      // optional owner from doctor object (backend will prefer doctor.owner)
+      const ownerValue = doctor?.owner || undefined;
+
+      const payload = {
+        doctorId: doctor._id || doctor.id,
+        doctorName: doctorNameValue,
+        speciality: specialityValue,
+        owner: ownerValue,
+        // NEW: send image hints (optional — backend prefers DB but accepts these)
+        doctorImageUrl: doctor?.imageUrl || doctor?.image || "",
+        doctorImagePublicId:
+          doctor?.imagePublicId || doctor?.image?.publicId || "",
+        patientName: formData.name,
+        mobile: mobileDigits,
+        age: formData.age,
+        gender: formData.gender,
+        date: dateISO,
+        time: selectedSlot,
+        fee: fee,
+        fees: fee,
+        paymentMethod: paymentMethod || "Online",
+        email: formData.email || undefined,
+        clerkUserId: activeUserId || undefined,
+        userId: activeUserId || undefined,
+      };
+
       const token = await getToken();
       if (!token) {
         throw new Error("Failed to obtain authentication token.");
@@ -297,7 +298,7 @@ export default function DoctorDetail() {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
-          "x-clerk-user-id": userId || user?.id || "",
+          "x-clerk-user-id": activeUserId,
         },
         body: JSON.stringify(payload),
       });
@@ -305,7 +306,11 @@ export default function DoctorDetail() {
       const body = await res.json().catch(() => null);
       if (!res.ok || res.redirected || !body) {
         const message =
-          body?.message || body?.error || (res.redirected ? "Authentication required. Please sign in again." : `Booking failed (${res.status})`);
+          body?.message ||
+          body?.error ||
+          (res.redirected
+            ? "Authentication required. Please sign in again."
+            : `Booking failed (${res.status})`);
         toast.error(message, { position: "top-center" });
         setIsSubmitting(false);
         return;
@@ -313,7 +318,10 @@ export default function DoctorDetail() {
 
       // If checkoutUrl is returned -> redirect to Stripe Checkout
       if (body?.checkoutUrl) {
-        // redirect user to Stripe Checkout
+        toast.info("Redirecting to Stripe Checkout...", {
+          position: "top-center",
+          autoClose: 2500,
+        });
         window.location.href = body.checkoutUrl;
         return;
       }
