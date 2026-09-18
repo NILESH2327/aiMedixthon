@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -8,11 +9,10 @@ import cors from "cors";
 import { clerkMiddleware } from '@clerk/express'
 import {connectDB} from "./config/db.js";
 import doctorRouter from "./routes/doctorRoute.js";
-import dotenv from "dotenv";
-dotenv.config();
 import serviceRouter from "./routes/serviceRoute.js";
 import appointmentRouter from "./routes/appointmentRouter.js";
 import serApptRouter from "./routes/serviceAppointmentRouter.js";
+import aiRouter from "./routes/aiRoutes.js";
 
 
 
@@ -55,6 +55,7 @@ app.use("/api/doctors",doctorRouter )
 app.use("/api/services",serviceRouter)
 app.use("/api/appointments",appointmentRouter)
 app.use("/api/service-appointments" ,serApptRouter)
+app.use("/api/ai", aiRouter)
 
 
 app.get("/", (req, res) => {

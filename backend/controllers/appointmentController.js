@@ -74,11 +74,10 @@ export const getAppointments = async (req,res)=>{
      const total = await Appointment.countDocuments(filter);
      return res.json({
       success :true,
-      appointmemts :items,
+      appointments :items,// save kar diya hu bhai 
       meta : {page,limit,total ,count:items.length}
      })
 
-      
      }catch(err){
 
       console.error("GetAPPointment error",err);

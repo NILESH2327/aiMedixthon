@@ -14,6 +14,13 @@ import Appointment from './pages/Appointment'
 import VerifyPaymentPage from '../VerifyPaymentPage'
 import VerifyServicePaymentPage from '../VerifyServicePaymentPage'
 import { CircleChevronUp } from 'lucide-react'
+import AiTools from "./pages/AiTools";
+import SymptomAnalyzer from "./pages/ai/SymptomAnalyzer";
+import MedicineScanner from "./pages/ai/MedicineScanner";
+import LabReportAnalyzer from "./pages/ai/LabReportAnalyzer";
+import HealthAssistant from "./pages/ai/HealthAssistant";
+import Recommendations from "./pages/ai/Recommendations";
+import AiHistory from "./pages/ai/AiHistory";
 
 const ScrollToTop=()=>{
   const {pathname} = useLocation();
@@ -81,6 +88,15 @@ function App() {
       <Route path="/services/:id" element={<ServiceDetailPage/>}/>
       <Route path="/contact" element={<Contact />} />
       <Route path="/appointments" element={<Appointment />} />
+      {/* ai-routes */}
+      <Route path="/tools" element={<AiTools />} />
+      <Route path="/ai-tools" element={<AiTools />} />
+      <Route path="/ai-tools/symptom-analyzer" element={<SymptomAnalyzer />}/>
+      <Route path="/ai-tools/medicine-scanner" element={<MedicineScanner />} />
+      <Route path="/ai-tools/lab-report" element={<LabReportAnalyzer />} />
+      <Route path="/ai-tools/assistant" element={<HealthAssistant />} />
+      <Route path="/ai-tools/recommendations" element={<Recommendations />} />  
+      <Route path="/ai-tools/history" element={<AiHistory />} />
       {/* doctor routes */}
 
       <Route path="/doctor-admin/login" element={<Login />} />

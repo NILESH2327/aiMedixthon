@@ -14,19 +14,21 @@ import {
 } from "lucide-react";
 import { bannerStyles } from "../assets/dummyStyles";
 
-import doctor1 from "../assets/BannerImg.png";
-import doctor2 from "../assets/D1.png";
-import doctor3 from "../assets/D2.png";
-import doctor4 from "../assets/D3.png";
-import doctor5 from "../assets/D4.png";
+import doctor1 from "../assets/hpxr.jpg";
+import doctor2 from "../assets/hp.jpg";
+import doctor3 from "../assets/hpm.jpg";
+import doctor4 from "../assets/hpp.jpg";
+import doctor5 from "../assets/hpx.jpg";
+import doctor6 from "../assets/images.jpg";
 
 // Replace these with your 5 final images — same array shape, just swap the src.
 const carouselImages = [
-   doctor1,
+  doctor1,
   doctor2,
   doctor3,
   doctor4,
   doctor5,
+  doctor6,
 ];
 
 function ImageCarousel({ images, intervalMs = 4000 }) {

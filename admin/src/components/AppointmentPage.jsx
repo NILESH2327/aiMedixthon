@@ -38,6 +38,7 @@ function dateTimeFromSlot(slot) {
 
 
 const AppointmentPage = () => {
+  console.log("🔥🔥 APPOINTMENT PAGE LOADED 🔥🔥");
   const isAdmin = true;
 
   const [appointments, setAppointments] = useState([]);
@@ -66,6 +67,9 @@ const AppointmentPage = () => {
           throw new Error(body?.message || `Failed to fetch (${res.status})`);
         }
         const data = await res.json();
+         console.log("🔥 ADMIN API DATA:", data);
+         console.log("🔥 ADMIN APPOINTMENTS:", data?.appointments);
+         console.log("🔥 API URL:", url);
         const items = (data?.appointments || []).map((a) => {
           const doctorName =
             (a.doctorId && a.doctorId.name) || a.doctorName || "";

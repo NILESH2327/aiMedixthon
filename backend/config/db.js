@@ -1,14 +1,16 @@
 import mongoose from "mongoose";
 
-
-
-// ShqlacxHNRG0MJQH
 export const connectDB = async () => {
-   await mongoose.connect("mongodb+srv://nileshkumar95559926_db_user:ShqlacxHNRG0MJQH@cluster0.ealu8dv.mongodb.net/medixthon")
+   const uri = process.env.MONGODB_URI;
+   if (!uri) {
+      console.error("Error: MONGODB_URI environment variable is missing.");
+      return;
+   }
+   await mongoose.connect(uri)
       .then(() => {
          console.log("Connected to MongoDB");
       })
       .catch((err) => {
          console.error("Error connecting to MongoDB:", err);
       });
-}
+}

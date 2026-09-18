@@ -491,14 +491,14 @@ export const doctorListStyles = {
 export const navbarStyles = {
   // Layout styles
   header: "relative font-serif",
-  navContainer: "mx-auto max-w-7xl lg:px-7 xl:px-2 px-4 py-5",
+  navContainer: "mx-auto max-w-7xl lg:px-7 xl:px-2 px-4 py-5 mt-0 mb-0",
   flexContainer: "flex items-center justify-between",
   
   // Logo section styles
-  logoContainer: "flex items-center gap-2",
-  logoImage: "w-18 h-18 rounded-full",
-  logoLink: "text-3xl xl:block lg:text-xs xl:text-xl font-bold text-green-700",
-  logoSubtext: "text-xs xl:block text-gray-500",
+  logoContainer: "flex items-center gap-3",
+  logoImage: "w-20 h-20 object-contain",
+  logoLink: "text-xl xl:block lg:text-xs xl:text-xl font-bold text-green-700 leading-tight",
+  logoSubtext: "text-xs xl:block text-gray-500 leading-tight",
   
   // Center navigation (desktop)
   centerNavContainer: "hidden lg:flex items-center justify-center relative",
@@ -591,7 +591,7 @@ export const heroStyles = {
   
   // Logo/Image styles
   logoContainer: "mx-auto mb-4 w-24 h-24 flex items-center justify-center",
-  logo: "w-50 h-50 object-contain",
+  logo: "w-20 h-20 object-contain",
   
   // Text styles
   heading: "text-3xl md:text-4xl font-extrabold text-emerald-900 mb-2",
