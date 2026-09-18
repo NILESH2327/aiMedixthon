@@ -4,7 +4,7 @@ import { AlertTriangle, Calendar, Check, CheckCircle, Clock, Image, Plus, Trash2
 
 
 const AddService = ({serviceId}) => {
-  const API_BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+  const API_BASE = (import.meta.env.VITE_BACKEND_URL || "http://localhost:4000").replace(/\/+$/, "");
    const fileRef = useRef(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);

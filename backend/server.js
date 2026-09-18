@@ -52,6 +52,14 @@ app.use(clerkMiddleware())
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ limit: '20mb', extended: true }));
 
+// Normalize double slashes in URLs (e.g. //api/doctors -> /api/doctors)
+app.use((req, res, next) => {
+  if (req.url && req.url.includes("//")) {
+    req.url = req.url.replace(/\/{2,}/g, "/");
+  }
+  next();
+});
+
 
 connectDB();
 // Routes

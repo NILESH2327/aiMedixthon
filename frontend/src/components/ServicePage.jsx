@@ -107,7 +107,7 @@ const ServiceCard = ({ service }) => {
 
 const ServicePage = ({previewCount= 9999}) => {
 
-   const API_BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+   const API_BASE = (import.meta.env.VITE_BACKEND_URL || "http://localhost:4000").replace(/\/+$/, "");
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

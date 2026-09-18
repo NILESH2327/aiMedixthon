@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { ChevronRight, Medal, MousePointer, MousePointer2Off } from 'lucide-react';
 
 const HomeDoctors = ({previewCount=8}) => {
-  const API_BASE = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
+  const API_BASE = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000').replace(/\/+$/, "");
   const [doctors,setDoctors] = useState([]);
   const [loading,setLoading] =useState(true);
   const [error ,setError] = useState("");

@@ -3,7 +3,7 @@ import { pageStyles ,statusClasses,keyframesStyles } from '../assets/dummyStyles
 import { Calendar, Search,BadgeIndianRupee } from 'lucide-react';
 
 
-  const API_BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+  const API_BASE = (import.meta.env.VITE_BACKEND_URL || "http://localhost:4000").replace(/\/+$/, "");
 
   //helper fxn
   function formatDateISO(iso) {
